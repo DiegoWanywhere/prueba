@@ -19,7 +19,7 @@
     "author":  "Webkul Software Pvt. Ltd.",
     "depends": ['account', 'sale_management', 'website_sale', 'website', 'wk_wizard_messages'],
     "category":  "website",
-    "version":  "1.1.6",
+    "version":  "1.1.8",
     "sequence":  1,
     "license":  "Other proprietary",
     "website":  "https://store.webkul.com/odoo-hotel-management-system.html",

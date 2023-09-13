@@ -206,8 +206,16 @@ odoo.define('hotel_managememnt_system.available_rooms', function (require) {
             var check_in = $('#check_in_cart').val();
             var check_out = $('#check_out_cart').val();
             var product_template_id = $('input[name="product_template_id"]').val();
+            var product_varient_id = $('input[name="product_id"]').val();
             var requirement_qty = $('input[name="add_qty"]').val() || 1;
-            ajax.jsonRpc('/available/qty/details', 'call', { 'check_in': check_in, 'check_out': check_out, 'product_template_id': product_template_id, 'requirement_qty': requirement_qty, 'availabilty_check': '0' }).then(function (val) {
+            ajax.jsonRpc('/available/qty/details', 'call', { 
+                'check_in': check_in, 
+                'check_out': check_out, 
+                'product_template_id': product_template_id, 
+                'requirement_qty': requirement_qty, 
+                'availabilty_check': '0',
+                'product_varient_id': product_varient_id })
+            .then(function (val) {
 
                 if (val['result'] == 'fail') {
                     $(".msg_alert").css("display", "none");

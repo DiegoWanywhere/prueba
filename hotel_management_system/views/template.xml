@@ -483,6 +483,12 @@
             <attribute name="t-att-data-max">len(product.product_variant_ids) if
                 product.is_room_type else ''</attribute>
         </xpath>
+        <xpath expr="//a[hasclass('btn','btn-link','js_add_cart_json')]" position="attributes">
+            <attribute name="class" separator=" " add="disabled"></attribute>
+        </xpath>
+        <xpath expr="//a[hasclass('btn','btn-link','js_add_cart_json','float_left')]" position="attributes">
+            <attribute name="class" separator=" " add="disabled"></attribute>
+        </xpath>
     </template>
 
     <template id="product_booking_bar" inherit_id="website_sale.product">
@@ -563,12 +569,13 @@
                 <div class="modal-dialog modal-side modal-bottom-right modal-notify modal-info"
                     role="document">
                     <!--Content-->
-                    <div class="modal-content"> --> <!--Header-->
+                    <div class="modal-content">
+                        <!--Header-->
                         <div class="modal-header">
                             <p class="heading">Product in the cart
                             </p>
 
-                            <button type="button" class="close" data-dismiss="modal"
+                            <button type="button" class="close" data-bs-dismiss="modal"
                                 aria-label="Close">
                                 <i class="fa fa-window-close"></i>
                             </button>
@@ -598,7 +605,7 @@
                             class="modal-footer justify-content-center">
                             <a type="button" class="btn btn-info text-light emptyCart">Empty cart</a>
                             <a type="button" class="btn btn-outline-info waves-effect"
-                                data-dismiss="modal">Cancel</a>
+                                data-bs-dismiss="modal">Cancel</a>
                         </div>
                     </div>
                     <!--/.Content-->

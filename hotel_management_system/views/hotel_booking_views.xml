@@ -154,7 +154,7 @@
                             <field name='pricelist_id'
                                 attrs="{'readonly': [('status_bar', '!=', 'initial')]}" />
                             <field name='currency_id'
-                                attrs="{'readonly': [('status_bar', '!=', 'initial')]}" />
+                                readonly='1' />
                             <field name='booking_reference' readonly='True'
                                 attrs="{'readonly': [('status_bar', '!=', 'initial')]}" />
 

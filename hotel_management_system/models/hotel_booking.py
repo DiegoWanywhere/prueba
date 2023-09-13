@@ -389,10 +389,8 @@ class HotelBookingLine(models.Model):
     product_id = fields.Many2one('product.product', string='Rooms')
     booking_id = fields.Many2one('hotel.booking',  readonly=True, copy=False)
     guest_info_ids = fields.One2many('guest.info', 'booking_id')
-    price = fields.Float(string='Price Per Night',
-                         related='product_id.lst_price', store=True)
-    description = fields.Text(
-        'Description', related='product_id.description_sale', store=True)
+    price = fields.Float(string='Price Per Night', store=True)
+    description = fields.Text('Description', compute="_get_description" , store=True)
     tax_ids = fields.Many2many('account.tax', string='Taxes')
     booking_days = fields.Integer(
         string='Days Book For', compute="_compute_booking_days")
@@ -428,9 +426,19 @@ class HotelBookingLine(models.Model):
         for line in self:
             price = line.price
             taxes = line.tax_ids.compute_all(price, line.booking_id.currency_id, 1,
-                                             product=line.product_id)
+                                            product=line.product_id)
             line.subtotal_price = taxes['total_excluded']*line.booking_days
             line.taxed_price = taxes['total_included']*line.booking_days
+
+    @api.depends('product_id', 'booking_id.pricelist_id', 'booking_days')
+    def _get_description(self):
+        for line in self:
+            if line.product_id.description_sale: 
+                line.description = line.product_id.description_sale
+            else:
+                line.description = ' '
+            if line.booking_id.pricelist_id:
+                line.price = line.booking_id.pricelist_id._get_product_price(line.product_id, line.booking_days)
 
     # -------------------------------------------------------------------------
     # OPEN VIEW FOR ROOM SERVICES

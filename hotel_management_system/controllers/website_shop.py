@@ -100,7 +100,7 @@ class WebsiteShopInherit(WebsiteSale):
         sale_order.order_line = False
 
     @http.route(['/available/qty/details'], type='json', auth="public", website=True)
-    def cal_room_availability(self, requirement_qty='', product_template_id='', check_in='', check_out='', availabilty_check=''):
+    def cal_room_availability(self, requirement_qty='', product_template_id='', check_in='', check_out='', availabilty_check='', **kw):
         if requirement_qty and product_template_id:
             sale_order = request.website.sale_get_order(force_create=True)
             check_in_val = datetime.strptime(check_in, '%Y-%m-%d')
@@ -112,9 +112,17 @@ class WebsiteShopInherit(WebsiteSale):
                 sale_order.hotel_check_in = check_in
                 sale_order.hotel_check_out = check_out
 
-            product_template = request.env['product.template'].sudo().browse(
-                int(product_template_id))
-            total_room = product_template.product_variant_ids
+            if kw.get('product_varient_id'):
+                product_varient = request.env['product.product'].sudo().browse(
+                int(kw.get('product_varient_id')))
+                total_room = product_varient
+            # 
+            # Right now we are booking the selected variant for a room instead of taking all the rooms of same type
+            #
+            # else:
+            #     product_template = request.env['product.template'].sudo().browse(
+            #         int(product_template_id))
+            #     total_room = product_template.product_variant_ids
 
             total_booking = request.env['hotel.booking'].sudo().search(
                 [('status_bar', 'not in', ['initial', 'checkout'])])
@@ -146,12 +154,15 @@ class WebsiteShopInherit(WebsiteSale):
                     if room.id not in (sale_order.mapped('order_line.product_id')).ids and not_available is False:
                         added_cart_room += 1
                         room_id = room
+                        qty = (check_out_val.date() - check_in_val.date()).days or 1
+                        price_unit = sale_order.pricelist_id._get_product_price(room_id, qty)
                         if availabilty_check == '0':
                             request.env['sale.order.line'].sudo().create({
                                 'name': room_id.name,
                                 'product_id': room_id.id,
-                                'product_uom_qty': (check_out_val.date() - check_in_val.date()).days or 1,
-                                'price_unit': room_id.currency_id._convert(room_id.list_price, sale_order.pricelist_id.currency_id, room_id.product_tmpl_id._get_current_company(pricelist=sale_order.pricelist_id), date.today()),
+                                'product_uom_qty': qty,
+                                'product_uom': room_id.uom_id.id,
+                                'price_unit': price_unit,
                                 'order_id': sale_order.id,
                             })
 
