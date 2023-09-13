@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>;) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.hotel.management</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="60"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+                    <div class="app_settings_block" data-string="Booking" string="Hotel Management" data-key="hotel_management_system">
+
+                        <h2>Hotel Configuration</h2>
+
+                        <div class="row mt16 o_settings_container" name="booking_product">
+                            <div class="col-xs-12 col-md-6 o_setting_box" id="website">
+                                <div class="o_setting_right_pane">
+                                    <label string="Website" for="website_id"/>
+                                    <div class="text-muted">
+                                        Settings on this page will apply to this website
+                                    </div>
+                                    <div class="mt16">
+                                        <field name="website_id" options="{'no_open': True, 'no_create': True}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box" id="default_booking_product">
+                                <div class="o_setting_right_pane">
+                                    <span class="o_form_label">Homepage Booking Product</span>
+                                    <div class="text-muted">
+                                    Product will use for homepage...
+                                    </div>
+                                    <div class="text-muted">
+                                        <field name="website_homepage_product_ids" widget="many2many_tags" required='True' domain="[('is_room_type', '=', True)]"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_booking_config_settings" model="ir.actions.act_window">
+            <field name="name">Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'hotel_management_system', 'bin_size': False}</field>
+        </record>
+
+        <menuitem id="booking_menu_configuration" name="Settings" parent="menu_hotel_configuration" sequence="0" action="action_booking_config_settings" groups="base.group_system"/>
+    </data>
+</odoo>

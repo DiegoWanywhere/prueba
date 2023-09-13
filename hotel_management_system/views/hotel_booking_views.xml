@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>;) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+        <record id="hotel_booking_sqn" model="ir.sequence">
+            <field name="name">Booking sequence</field>
+            <field name="code">hotel.booking</field>
+            <field name="prefix">B</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False" />
+        </record>
+
+        <record model="ir.ui.view" id="hotel_booking_view_tree">
+            <field name="name">hotel.booking.tree</field>
+            <field name="model">hotel.booking</field>
+            <field name="priority" eval="20" />
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Hotel Booking" decoration-danger="status_bar == 'checkout'"
+                    decoration-info="status_bar == 'confirm'">
+                    <field name="sequence_id" />
+                    <field name='partner_id' widget="res_partner_many2one" optional="show" />
+                    <field name='user_id' widget="many2one_avatar_user" optional="show" />
+                    <field name='check_in' />
+                    <field name='check_out' />
+                    <field name='status_bar' widget="badge" decoration-info="status_bar == 'draft'"
+                        decoration-warning="status_bar in ('allot')"
+                        decoration-success="status_bar == 'confirm'"
+                        decoration-danger="status_bar in ('checkout','cancel')" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="view_hotel_booking_filter" model="ir.ui.view">
+            <field name="name">hotel.booking.list.select</field>
+            <field name="model">hotel.booking</field>
+            <field name="mode">primary</field>
+            <field name="priority" eval="15" />
+            <field name="arch" type="xml">
+                <search string="Search Sales Order">
+                    <field name="sequence_id" />
+                    <separator />
+                    <filter string="Confirm" name="confirm" domain="[('status_bar','=','confirm')]" />
+                    <filter string="Checkout" name="checkout"
+                        domain="[('status_bar','=','checkout')]" />
+                    <filter string="Draft" name="draft" domain="[('status_bar','=','draft')]" />
+                    <separator />
+                    <filter string="Check in Date" name="filter_checkin_date" date="check_in" />
+                    <filter string="Check out Date" name="filter_checkout_date" date="check_out" />
+                    <separator />
+                    <filter string="Sale order Booking" name="filter_booking_sale_order"
+                        domain="[('booking_reference','=','sale_order')]" />
+                    <filter string="Manual Booking" name="filter_booking_manual"
+                        domain="[('booking_reference','=','manual')]" />
+                    <separator />
+                    <filter string="Today Check in" name="checkin_today"
+                        domain="[('check_in', '=', context_today().strftime('%Y-%m-%d'))]" />
+                    <filter string="Today Check out" name="checkout_today"
+                        domain="[('check_out', '=', context_today().strftime('%Y-%m-%d'))]" />
+                    <filter string="Future Booking" name="booking_upcoming_all"
+                        domain="[('check_out', '&gt;', context_today().strftime('%Y-%m-%d'))]" />
+                    <group expand="0" string="Group By">
+                        <filter string="Salesperson" name="salesperson" domain="[]"
+                            context="{'group_by': 'user_id'}" />
+                        <filter name="customer" string="Customer" domain="[]"
+                            context="{'group_by': 'partner_id'}" />
+                        <filter string="Check In" name="Check In" domain="[]"
+                            context="{'group_by': 'check_in'}" />
+                        <filter string="Check Out" name="Check Out" domain="[]"
+                            context="{'group_by': 'check_out'}" />
+                        <filter string="Booking Reference" name="Booking Reference" domain="[]"
+                            context="{'group_by': 'booking_reference'}" />
+                        <filter string="Status" name="booking_status" domain="[]"
+                            context="{'group_by': 'status_bar'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="hotel_booking_calendar_view" model="ir.ui.view">
+            <field name="name">hotel.booking.view</field>
+            <field name="model">hotel.booking</field>
+            <field name="arch" type="xml">
+                <calendar string="Booking" date_start="check_in" date_stop="check_out" color="status_bar" hide_time="True"
+                    mode="month" quick_add="False" event_open_popup="True">
+                    <field name="partner_id" avatar_field="image_1920" />
+                    <field name="check_in" />
+                    <field name="check_out" />
+                    <field name="currency_id" invisible="1"/>
+                    <field name="total_amount"  widget="monetary"/>
+                </calendar>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="hotel_booking_view_form">
+            <field name="name">hotel.booking.form</field>
+            <field name="model">hotel.booking</field>
+            <field name="priority" eval="21" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Hotel Booking">
+                    <header>
+                        <button name="action_confirm_booking" string="Confirm Booking" type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('status_bar', '!=', 'initial')]}" />
+                        <button name="%(action_view_customer_doc)d" string="Allot Room"
+                            type="action" class="oe_highlight"
+                            attrs="{'invisible': [('status_bar', '!=', 'confirm')]}" />
+                        <button name="%(action_view_compute_bill)d" string="Print Bill"
+                            type="action" class="oe_highlight"
+                            attrs="{'invisible': [('status_bar', 'not in', ['checkout','allot'])]}" />
+                        <button name="action_checkout" string="Checkout" type="object"
+                            class="oe_highlight"
+                            confirm="Do you want to checkout?"
+                            attrs="{'invisible': [('status_bar', 'not in', ['allot'])]}" />
+                        <field name="status_bar" widget="statusbar"
+                            statusbar_visible="initial,confirm,allot,cancel" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_inline oe_stat_button pr-2" name="sale_order_view"
+                                type="object" attrs="{'invisible': [('status_bar','!=','allot')]}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                    fill="currentColor" class="bi bi-shop-window me-2"
+                                    viewBox="0 0 16 16">
+                                    <path
+                                        d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.371 2.371 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976l2.61-3.045zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0zM1.5 8.5A.5.5 0 0 1 2 9v6h12V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5zm2 .5a.5.5 0 0 1 .5.5V13h8V9.5a.5.5 0 0 1 1 0V13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a.5.5 0 0 1 .5-.5z"></path>
+                                </svg>
+                                Room Services </button>
+                        </div>
+                        <field name="image_1920" widget="image" class="oe_avatar" />
+                        <div class="oe_title">
+                            <h1>
+                                <field name='sequence_id' readonly="1" />
+                            </h1>
+                        </div>
+                        <group>
+
+                            <field name='order_id' invisible="True" />
+                            <field name='partner_id'
+                                attrs="{'readonly': [('status_bar', '!=', 'initial')]}"
+                                required="True" />
+                            <field name='check_in'
+                                attrs="{'readonly': [('status_bar', '!=', 'initial')]}"
+                                required="True" />
+                            <field name='check_out'
+                                attrs="{'readonly': [('status_bar', '!=', 'initial')]}"
+                                required="True" />
+                            <field name='pricelist_id'
+                                attrs="{'readonly': [('status_bar', '!=', 'initial')]}" />
+                            <field name='currency_id'
+                                attrs="{'readonly': [('status_bar', '!=', 'initial')]}" />
+                            <field name='booking_reference' readonly='True'
+                                attrs="{'readonly': [('status_bar', '!=', 'initial')]}" />
+
+                        </group>
+                        <notebook>
+                            <page string="Folio">
+                                <button name="%(action_view_add_rooms)d" string="Add Room"
+                                    type="action" class="btn btn-success btn-sm"
+                                    attrs="{'invisible': [('status_bar', '!=', 'initial')]}" />
+                                <field name='booking_line_ids'
+                                    attrs="{'readonly': [('status_bar', '!=', 'initial')]}"
+                                    nolabel="1" widget="one2many" mode="tree" required="True">
+                                    <tree editable="bottom" create="0">
+                                        <field name='booking_sequence_id' readonly='True' />
+                                        <field name='product_id'
+                                            domain="[('product_tmpl_id.is_room_type','=',True)]"
+                                            readonly='True' />
+                                        <field name='guest_info_ids' widget="many2many_tags" />
+                                        <field name='price' readonly="False" />
+                                        <field name='description' readonly="False" widget="html" />
+                                        <field name="tax_ids" widget="many2many_tags"
+                                            options="{'no_create': True}"
+                                            context="{'search_view_ref': 'account.account_tax_view_search'}"
+                                            domain="[('type_tax_use','=','sale')]" />
+                                        <field name='booking_days' />
+                                        <field name='subtotal_price' />
+                                        <field name='status_bar' invisible="True" />
+                                        <button
+                                            name="%(hotel_management_system.action_view_exchange_rooms)d"
+                                            attrs="{'invisible': [('status_bar', '!=', 'confirm')]}"
+                                            type="action" title="Exchange"
+                                            class="fa fa-refresh fa-spin fa-3x" />
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" name="sale_total">
+                                    <!-- <field name="total_rooms" readonly="1" string="Total
+                                    Rooms"/> -->
+
+                                    <!-- <field name="day_count"/> -->
+                                    <!-- <field name="booking_discount"/> -->
+                                    <field name="amount_untaxed" string='Untaxed Amount'
+                                        widget='monetary'
+                                        options="{'currency_field': 'currency_id'}" />
+                                    <field name="tax_amount" readonly="1" />
+                                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="total_amount" />
+                                    </div>
+                                    <field name="total_amount" nolabel="1" readonly="1"
+                                        class="oe_subtotal_footer_separator" widget='monetary'
+                                        options="{'currency_field': 'currency_id'}" />
+                                </group>
+                                <div class="clearfix" />
+                            </page>
+                            <page string="Customer Document"
+                                attrs="{'invisible': [('status_bar', 'not in', ['checkout','allot'])]}">
+                                <group>
+                                    <field name='docs_ids' widget="many2many_binary" readonly='True' />
+                                    <field name='doc_description' readonly='True' />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hotel_booking_view_pivot" model="ir.ui.view">
+            <field name="name">booking.report.pivot</field>
+            <field name="model">hotel.booking</field>
+            <field name="arch" type="xml">
+                <pivot string="Booking Analysis" sample="1">
+                    <field name="partner_id" type="col" />
+                    <field name="check_in" interval="month" type="row" />
+                    <field name="total_amount" type="measure" />
+                </pivot>
+            </field>
+        </record>
+        <record id="hotel_booking_view_graph" model="ir.ui.view">
+            <field name="name">booking.report.graph</field>
+            <field name="model">hotel.booking</field>
+            <field name="arch" type="xml">
+                <graph string="Booking Analysis" type="line" sample="1">
+                    <field name="check_in" type="row" interval="day" />
+                    <field name="total_amount" type="measure" />
+                </graph>
+            </field>
+        </record>
+
+        <record id="action_hotel_booking_menu" model="ir.actions.act_window">
+            <field name="name">Booking</field>
+            <field name="res_model">hotel.booking</field>
+            <field name="view_ids"
+                eval="[(5,0,0),
+            (0,0,{'sequence':1,'view_mode':'tree','view_id':ref('hotel_management_system.hotel_booking_view_tree')}),
+            (0,0,{'sequence':2,'view_mode':'form','view_id':ref('hotel_management_system.hotel_booking_view_form')}),
+            (0,0,{'sequence':3,'view_mode':'calendar','view_id':ref('hotel_management_system.hotel_booking_calendar_view')}),
+            ]" />
+            <field name="search_view_id" ref="view_hotel_booking_filter" />
+            <field name="context">{'search_default_booking_status': 1}</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_booking">
+                    Create a new booking, the first step of a new Room!
+                </p>
+                <p> Once the booking is confirmed by the customer, it becomes a Booked Room.<br />
+                    You will be able to create an bill and collect the bill. </p>
+            </field>
+        </record>
+
+        <record id="action_hotel_booking_reporting_menu" model="ir.actions.act_window">
+            <field name="name">Reporting</field>
+            <field name="res_model">hotel.booking</field>
+            <field name="view_mode">graph,pivot</field>
+        </record>
+
+        <record id="action_hotel_dashboard" model="ir.actions.act_window">
+            <field name="name">Dashboard</field>
+            <field name="res_model">hotel.booking</field>
+            <field name="view_mode">calendar</field>
+        </record>
+        <menuitem id="menu_hotel_management_root" name="Hotel"
+            web_icon="hotel_management_system,static/description/icon.png" sequence="1"
+            action="hotel_management_system.action_hotel_dashboard" />
+        <menuitem id="menu_hotel_dashboard" name="Dashboard" sequence="2"
+            parent="menu_hotel_management_root"
+            action="hotel_management_system.action_hotel_dashboard" />
+        <menuitem id="menu_hotel_reporting" name="Reporting" sequence="5"
+            parent="hotel_management_system.menu_hotel_management_root" />
+        <menuitem id="menu_hotel_reporting_booking" name="Booking" sequence="1"
+            parent="menu_hotel_reporting"
+            action="hotel_management_system.action_hotel_booking_reporting_menu" />
+        <menuitem id="menu_hotel_booking" name="Hotel Booking" sequence="4"
+            parent="hotel_management_system.menu_hotel_management_root"
+            action="action_hotel_booking_menu" />
+    </data>
+</odoo>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>;) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+
+    <template id="hotel_snippetace_into_bar" inherit_id="website.snippets" name="Hotel Management Snippetbar">
+        <xpath expr="//div[@id='snippet_structure']//div[hasclass('o_panel_body')]" position="inside">
+            <t t-snippet="hotel_management_system.hotel_homepage_snippet" t-thumbnail="/hotel_management_system/static/src/img/snippets_thumbs/header_bg.png"/>
+        </xpath>
+        <xpath expr="//div[@id='snippet_effect']//div[hasclass('o_panel_body')]" position="inside">
+            <t t-snippet="hotel_management_system.s_hotel_homepage_room_snippet" t-thumbnail="/hotel_management_system/static/src/img/snippets_thumbs/header_bg.png"/>
+        </xpath>
+    </template>
+
+    <template id="hotel_homepage_snippet" name="Hotel Homepage snippet">
+        <section class="s_hotel_banner parallax s_parallax_is_fixed" data-scroll-background-ratio="1" style="background-image: url('/hotel_management_system/static/src/img/snippets_thumbs/header_bg.png');">
+            <div class="container-fluid">
+                <div class="jumbotron hotelBg_jumb ms-auto me-auto" data-name="Box">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-8 col-sm-12 mt64">
+                            <div class="text-center text-light">
+                                <p id="welcome_to_msg">WELCOME TO</p>
+                                <h1 id="hotel_management_msg">
+                                Hotel Management System
+                                </h1>
+                            </div>
+                            <div id="basic_info_div">
+                                <p class="basic_info text-light text-center">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. </p>
+                            </div>
+                        </div>
+                        <div id="homepage_booking_panel" class="col-lg-4 col-md-4 mt16 mb16 col-sm-12">
+                            <div class="card booking-panel-card">
+                                <div class="card-header room-card-header">
+                                    <strong class="text-light">Book A Room</strong>
+                                </div>
+                                <div class="card-body booking-panel-card-body">
+                                    <form action="/shop">
+                                        <div class="row">
+                                            <div class="col-md-6 col">
+                                                <label for="wk_check_in" class="form-label text-light">Check in</label>
+                                                <input class="form-control" name="check_in" id="wk_check_in" type="date"/>
+                                            </div>
+                                            <div class="col-md-6 col">
+                                                <label for="wk_check_out" class="form-label text-light">Check out</label>
+                                                <input class="form-control" name="check_out" id="wk_check_out" type="date"/>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="wk_signup_psw" class="form-label text-light">No of members</label>
+                                            <input class="form-control" id="wk_signup_psw" title="Result may be differ based on Check in/out date" type="text" placeholder="Enter no. of members"/>
+                                        </div>
+                                        <button type="submit" class="btn ml-2 search_btn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                            </svg> Search
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- </div> -->
+            </div>
+        </section>
+    </template>
+
+    <template id="home_rooms" name="Website Room Displate">
+        <div class='row ms-md-4 me-md-4'>
+            <t t-foreach="product_ids" t-as='product'>
+                <t t-set="combination_info" t-value="product._get_combination_info(only_template=True, add_qty=add_qty or 1, pricelist=pricelist)"/>
+                <div class='col-12 col-md-4 col-sm-6 col-lg-4' id="ProductinBox">
+                    <div style="border-radius:6px;margin-bottom:30px;overflow:hidden">
+                        <div class="o_dynamic_product_hovered room_dynamic_hover" t-if="product.image_1920">
+                            <img t-att-src="image_data_uri(product.image_1920)" class="img img-fluid w-100" t-att-alt="product.name" style="min-height: 210px;max-height: 210px;"/>
+                        </div>
+                        <div t-else="">
+                            <img class="img img-fluid w-100 product_snippet-size" t-attf-src="/web/image/product.template/{{product.id}}/image_1024" t-att-alt="product.name"/>
+                        </div>
+                        <div class="pt-2">
+                            <div class="p-2 snippet-room-info">
+                                <div>
+                                    <strong t-esc='product.name'/>
+                                </div>
+                                <div class='d-flex justify-content-between'>
+                                    <div>
+                                        <span t-if="combination_info['price']" t-esc="combination_info['price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                        <span>/night</span>
+                                    </div>
+                                    <div>
+                                        <span>
+                                            <i class="fa fa-users"/>
+                                            <span>
+                                                <span> No. Of Members:</span>
+                                                <t t-esc='product.max_adult'/>
+                                            </span>
+                                        </span>
+                                    </div>
+
+                                </div>
+                                <div class='text-justify mt-2 mb-2'>
+                                    <span t-esc='product.product_website_description'/>
+                                </div>
+                                <div>
+                                    <a t-att-href="product.website_url" class='btn btn-primary'>View More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </t>
+        </div>
+    </template>
+
+</odoo>

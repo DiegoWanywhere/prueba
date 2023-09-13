@@ -1,0 +1,126 @@
+.roomCustomUI {
+    border-top: unset !important;
+
+    @media (max-width: 767.98px) {
+        width: unset !important;
+    }
+
+    .desk_title {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .roomCount {
+        border-bottom: 1px solid #CED4DA;
+    }
+
+    .allBookingRoom {
+        margin-top: 19px;
+        padding-left: 20px;
+    }
+
+    .roomRowFilter {
+        margin: 10px;
+        display: flex
+    }
+
+    .o_room_filter_avatar {
+        width: 20px;
+        height: 20px;
+        border-radius: 2px;
+    }
+
+    .filterParents {
+        margin-bottom: 10px;
+        border: 1px solid #CED4DA;
+        border-radius: 7px;
+        padding: 10px;
+    }
+}
+
+.request-panel-border {
+    border-bottom: 1px solid #CED4DA;
+}
+
+.check-out-requests {
+    color: $cyan-200;
+}
+
+
+.navbar-booking-container {
+    height: 104px;
+    align-items: normal !important;
+
+}
+
+.mainData {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, "Liberation Sans", Arial, "Odoo Unicode Support Noto", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-weight: 900;
+    border-radius: 9px;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+}
+
+
+.selected_room_container {
+    background: linear-gradient(45deg, #49a09d, #5f2c82);
+    border-radius: 7px;
+
+
+    h3{
+        color: white;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    td {
+        // padding: 15px;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+    tbody {
+        tr {
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        td {
+            position: relative;
+            font-size: 9px;
+            &:hover {
+                &:before {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    top: -9999px;
+                    bottom: -9999px;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    z-index: -1;
+                }
+            }
+        }
+    }
+}
+
+.o_view_nocontent_booking:before {
+    @extend %o-nocontent-init-image;
+    width: 120px;
+    height: 140px;
+    background: transparent url(/hotel_management_system/static/src/img/images.jpeg) no-repeat center;
+}
+
+.o_view_nocontent_room:before {
+    @extend %o-nocontent-init-image;
+    width: 120px;
+    height: 140px;
+    background: transparent url(/hotel_management_system/static/src/img/room.png) no-repeat center;
+}

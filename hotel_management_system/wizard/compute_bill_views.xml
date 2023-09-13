@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>;) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <record id="view_compute_bill" model="ir.ui.view">
+        <field name="name">Compute Bill</field>
+        <field name="model">booking.bill</field>
+        <field name="arch" type="xml">
+            <form string="Compute Bill">
+                <field name="order_ids" />
+                <group>
+                    <field name='print_bill' widget="radio" options="{'horizontal':true}" />
+                </group>
+                <button name="print_report" class="btn btn-success" string="Print" type="object"
+                    attrs="{'invisible':[('print_bill','=','separate')]}" />
+                <button name="print_report" class="btn btn-success" type="object"
+                    string="Final Bill" attrs="{'invisible':[('print_bill','=','combine')]}" />
+                <button name="print_detailed_report" class="btn btn-primary ms-2"
+                    string="Detailed Bill" type="object"
+                    attrs="{'invisible':[('print_bill','=','combine')]}" />
+                <footer>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_view_compute_bill" model="ir.actions.act_window">
+        <field name="name">Print Bill</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">booking.bill</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

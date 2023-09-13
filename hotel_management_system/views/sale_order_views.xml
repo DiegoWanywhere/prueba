@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>;) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+        <record id="tree_inherit_quotation_view_hotel_booking" model="ir.ui.view">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree" />
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="booking_id" context="{'default_booking_id': booking_id}" invisible='True'/>
+                    <field name="partner_id" context="{'default_partner_id': partner_id}" invisible='True'/>
+                    <field name="hotel_check_in" context="{'default_hotel_check_in': hotel_check_in}" invisible='True'/>
+                    <field name="hotel_check_out" context="{'default_hotel_check_out': hotel_check_out}" invisible='True'/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_sale_order_form_inherit" model="ir.ui.view">
+            <field name="name">store.store.sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='sale_header']" position="inside">
+                    <group name="booking_details">
+                        <field name="is_room_type" invisible="True"/>
+                        <field name="hotel_check_in" attrs="{'required': [('is_room_type', '=', True)],'readonly': ['|',('state','!=','draft'),('booking_line_id' ,'!=', False)]}"/>
+                        <field name="hotel_check_out" attrs="{'required': [('is_room_type', '=', True)],'readonly': ['|',('state','!=','draft'),('booking_line_id' ,'!=', False)]}"/>
+                    </group>
+                </xpath>
+
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_inline oe_stat_button pr-2" name="action_view_booking" type="object" icon="fa-bold" attrs="{'invisible': [('booking_count', '=', 0)]}">
+                        <field string="Booking" name="booking_count" readonly='True' widget="statinfo"></field>
+                    </button>
+                </xpath>
+
+                <xpath expr="//page[@name='order_lines']//tree//field[@name='product_id']" position="replace">
+
+                    <field name="product_id" attrs="{
+                                            'readonly': [('product_updatable', '=', False)],
+                                            'required': [('display_type', '=', False)],
+                                        }" options="{'no_open': True}" force_save="1" context="{
+                                            'partner_id': parent.partner_id,
+                                            'quantity': product_uom_qty,
+                                            'pricelist': parent.pricelist_id,
+                                            'uom':product_uom,
+                                            'company_id': parent.company_id,
+                                            'default_lst_price': price_unit,
+                                            'default_description_sale': name
+                                        }" domain="[('sale_ok', '=', True), ('product_tmpl_id.is_room_type','=',parent.is_room_type),'|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]" widget="product_configurator" />
+                </xpath>
+                <xpath expr="//page[@name='order_lines']//field[@name='order_line']" position="before">
+                    <button name="%(hotel_management_system.action_view_add_rooms)d" string="Add Room" type="action" class="btn btn-primary btn-sm mb-1" attrs="{'invisible': ['|', ('booking_id', '!=', False),('state', '!=', 'draft')]}"/>
+                </xpath>
+                <xpath expr="//page[@name='order_lines']//field[@name='product_id']" position="after">
+                    <field name="guest_info_ids" widget="one2many"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

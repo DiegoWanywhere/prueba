@@ -1,0 +1,256 @@
+#ProductinBox:hover {
+  -ms-transform: scale(1.01);
+  /* IE 9 */
+  -webkit-transform: scale(1.01);
+  /* Safari 3-8 */
+  transform: scale(1.01);
+}
+
+.snippet-room-info {
+  color: #454545;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #AFADA9;
+    transition: all .4s ease;
+    -webkit-transition: all .4s ease;
+    color: white;
+
+  }
+}
+
+/* Glassy effect on snippet */
+.booking-panel-card,
+.booking-panel-card-body {
+  background: rgba(255, 255, 255, 0.23);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8.5px);
+  -webkit-backdrop-filter: blur(8.5px);
+}
+
+.booking-panel-card-body {
+  background-color: unset !important;
+}
+
+.room-card-header {
+  border-bottom: unset !important;
+}
+
+
+.booking-panel-card::before,
+.booking-panel-card::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: scale3d(0, 0, 1);
+  transition: transform .3s ease-out 0s;
+  background: rgba(255, 255, 255, 0.1);
+  content: '';
+  pointer-events: none;
+}
+
+.booking-panel-card::before {
+  transform-origin: left top;
+}
+
+.booking-panel-card::after {
+  transform-origin: right bottom;
+}
+
+.booking-panel-card:hover::before,
+.booking-panel-card:hover::after,
+.booking-panel-card:focus::before,
+.booking-panel-card:focus::after {
+  transform: scale3d(1, 1, 1);
+}
+
+#ProductinBox {
+  transition: transform .2s;
+}
+
+.room_details {
+  box-shadow: 0px 0px 4px 0px #00000040;
+  border-radius: 10px;
+  padding: 20px;
+
+  ul.js_add_cart_variants {
+    li {
+      ul {
+        display: flex;
+
+        li {
+          margin-right: 30px !important;
+        }
+      }
+    }
+  }
+
+  &>h1 {
+    font-size: 16px !important;
+    color: black;
+    font-weight: 600;
+  }
+
+  .product_price {
+    margin-top: unset !important;
+
+    &,
+    &>h4,
+    & b {
+      text-align: right;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 20px;
+    }
+  }
+}
+
+.room_details:hover {
+  box-shadow: 0 0 11px rgba(33, 33, 33, .2);
+}
+
+#guestModalLongTitle {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 20px;
+}
+
+.hotel_website_description {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 20px;
+  /* or 143% */
+
+  color: #989898;
+}
+
+.RoomdescriptionTab {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  /* identical to box height, or 137% */
+
+  color: #000000;
+}
+
+.roomCategonProductPage {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+  /* identical to box height, or 125% */
+
+  color: #333333;
+}
+
+.roomCategonBookButton {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.inputGuestlabel {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+  /* identical to box height, or 125% */
+
+  color: #333333;
+}
+
+.adultChildnotice,
+.inputGuestgenderlabel {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 20px;
+  color: #989898;
+}
+
+.addGuestForm {
+  color: #4a4a4a;
+  font-family: lato;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.addGuest_Done {
+  background-image: linear-gradient(95deg,
+      rgba(80, 152, 211, 0.15) 1%,
+      #012f84 130%);
+  border-radius: 3px;
+  // box-shadow      : 0 3px 4px 0 rgb(0 0 0 / 20%);
+  color: #fff;
+  display: flex;
+  font-size: 16px;
+  font-weight: 900;
+  height: 48px;
+  text-transform: uppercase;
+  width: 200px;
+  align-items: center;
+  justify-content: center;
+}
+
+.addGuestModal_button {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+  padding-left: inherit;
+  padding-right: inherit;
+  /* identical to box height, or 125% */
+
+  color: #ffffff;
+
+  background: #23c1ae;
+}
+
+.cancelModalButton {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+  /* identical to box height, or 125% */
+
+  text-decoration-line: underline;
+
+  color: #bbbbbb;
+  cursor: pointer;
+}
+
+.add_row {
+  font-size: 16px;
+  font-weight: 900;
+  color: #714b67;
+  cursor: pointer;
+}
+
+.available_room {
+  color: #e85757;
+  font-size: 16px;
+  font-weight: 400;
+  padding-top: 5px;
+}
+
+.product_snippet-size {
+  min-height: 210px;
+  max-height: 210px;
+}
